@@ -1,3 +1,6 @@
 # API
 fastapi[all]==0.95.1
 uvicorn[standard]
+
+# test server
+pytest==7.3.1
