@@ -7,4 +7,3 @@ class DatasetSchema(BaseModel):
 
     filename: Optional[str]
     content: str
-
