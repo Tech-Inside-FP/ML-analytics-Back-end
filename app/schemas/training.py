@@ -5,5 +5,5 @@ from typing import Optional
 
 class DatasetSchema(BaseModel):
 
-    filename: Optional[str]
+    filename: Optional[str] = None
     content: bytes
