@@ -17,7 +17,7 @@ class DatasetSchema(BaseModel):
         schema_extra = {
             'example': {
                 'filename': 'database.csv',
-                'content': base64.b64encode('dataframe.csv'.encode(encoding='utf-8')),
+                'content': base64.b64encode(s='dataframe.csv'.encode(encoding='utf-8')),
                 'features': [
                     'column1',
                     'column3',
