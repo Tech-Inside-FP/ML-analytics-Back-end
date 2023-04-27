@@ -2,6 +2,7 @@
 from pydantic import BaseModel, Field
 from typing import Optional, List
 
+import pandas as pd
 import base64
 
 
@@ -17,7 +18,7 @@ class DatasetSchema(BaseModel):
         schema_extra = {
             'example': {
                 'filename': 'database.csv',
-                'content': base64.b64encode(s='dataframe.csv'.encode(encoding='utf-8')),
+                'content': base64.b64encode(s=pd.read_csv(filepath_or_buffer='test_files/test_dataset_1.csv').to_json().encode(encoding='utf-8')),
                 'features': [
                     'column1',
                     'column3',
