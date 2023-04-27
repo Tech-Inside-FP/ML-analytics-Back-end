@@ -5,3 +5,6 @@ uvicorn[standard]
 # test server
 requests==2.29.0
 pytest==7.3.1
+
+# data manipulation
+pandas>=2.0.1
