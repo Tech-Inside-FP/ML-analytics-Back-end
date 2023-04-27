@@ -6,4 +6,5 @@ uvicorn[standard]
 requests==2.29.0
 
 # data manipulation
+openpyxl==3.1.2
 pandas>=2.0.1
