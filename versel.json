@@ -3,8 +3,10 @@
         "src": "app/main.py",
         "use": "@vercel/python"
     },
-    "routes": {
-        "src": "/(.*)",
-        "dst": "app/main.py"
-    }
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dst": "app/main.py"
+        }
+    ]
 }
