@@ -1,16 +1,17 @@
 # imports
-import pandas as pd
-import numpy as np
-
-import matplotlib.pyplot as plt
-
-from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score, accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
+from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.tree import DecisionTreeClassifier, plot_tree
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.linear_model import LinearRegression
 from sklearn.naive_bayes import MultinomialNB
+
+import matplotlib.pyplot as plt
 import seaborn as sns
+import pandas as pd
+import numpy as np
+import io
+
 
 
 def simple_linear_regression(x, y):
@@ -34,9 +35,12 @@ def simple_linear_regression(x, y):
     plt.xlabel('X')
     plt.ylabel('Y')
     plt.title('Regressão Linear Simples')
-    plt.show()
+    
+    image_bytes = io.BytesIO()
+    plt.savefig(image_bytes, format='png')
+    plt.close()
 
-    return mae, mse, rmse, r2, model
+    return mae, mse, rmse, r2, model, image_bytes
 
 # dados de exemplo
 x = np.array([1, 2, 3, 4, 5])
@@ -68,9 +72,12 @@ def multiple_linear_regression(x, y):
     plt.title('Métricas de Regressão Linear Múltipla')
     plt.xlabel('Métricas')
     plt.ylabel('Valores')
-    plt.show()
+    
+    image_bytes = io.BytesIO()
+    plt.savefig(image_bytes, format='png')
+    plt.close()
 
-    return mae, mse, rmse, r2, model
+    return mae, mse, rmse, r2, model, image_bytes
 
 #dados de exemplo
 x = np.array([[1, 2, 3], [2, 3, 4], [3, 4, 5], [4, 5, 6], [5, 6, 7]])
@@ -111,9 +118,12 @@ def naive_bayes_classifier(train_data, test_data):
     plt.xlabel('Predicted')
     plt.ylabel('True')
     plt.title('Confusion Matrix')
-    plt.show()
+    
+    image_bytes = io.BytesIO()
+    plt.savefig(image_bytes, format='png')
+    plt.close()
 
-    return accuracy, precision, recall, f1, cm, nb
+    return accuracy, precision, recall, f1, cm, nb, image_bytes
 
 #exemplo dados de treinamento
 train_data = pd.DataFrame({
@@ -167,25 +177,12 @@ def decision_tree_classifier(train_data, test_data):
     #Plot arvore
     plt.figure(figsize=(12, 8))
     plot_tree(dtc, feature_names=X_train.columns, class_names=['0', '1'], filled=True, rounded=True)
-    plt.show()
+    
+    image_bytes = io.BytesIO()
+    plt.savefig(image_bytes, format='png')
+    plt.close()
 
-    return accuracy, precision, recall, f1, cm, dtc
-
-#dados de exemplo
-train_data = pd.DataFrame({
-    'feature_1': [1, 0, 1, 0, 1, 1],
-    'feature_2': [0, 1, 1, 1, 0, 0],
-    'label': [0, 0, 1, 1, 1, 0]
-})
-
-test_data = pd.DataFrame({
-    'feature_1': [1, 0, 1],
-    'feature_2': [1, 1, 0],
-    'label': [1, 0, 1]
-})
-
-#Chama funcao decision_tree_classifier
-dtc = decision_tree_classifier(train_data, test_data)
+    return accuracy, precision, recall, f1, cm, dtc, image_bytes
 
 """### Model KNN"""
 
@@ -218,6 +215,9 @@ def knn_classifier(train_data, test_data, k):
     plt.xlabel('Predicted')
     plt.ylabel('True')
     plt.title('Confusion Matrix')
-    plt.show()
+    
+    image_bytes = io.BytesIO()
+    plt.savefig(image_bytes, format='png')
+    plt.close()
 
-    return accuracy, precision, recall, f1, cm, knn
+    return accuracy, precision, recall, f1, cm, knn, image_bytes
