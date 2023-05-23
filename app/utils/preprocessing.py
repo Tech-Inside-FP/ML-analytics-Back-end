@@ -1,7 +1,19 @@
 # imports
+from sklearn.model_selection import train_test_split
+
+import pandas as pd
 import numpy as np
 import datetime
 import re
+
+
+def split_dataset(data: pd.DataFrame):
+
+    x_train, x_test, y_train, y_test = train_test_split(data.iloc[:,:-1], data.iloc[:,-1], test_size=0.2)
+    train = pd.concat(objs=[x_train, y_train], axis=1)
+    test = pd.concat(objs=[x_test, y_test], axis=1)
+
+    return train, test
 
 
 def tratar_coluna_data(dado):

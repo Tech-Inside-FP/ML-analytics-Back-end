@@ -7,4 +7,11 @@ requests==2.29.0
 
 # data manipulation
 openpyxl==3.1.2
-pandas>=2.0.1
+pandas==2.0.1
+
+# visualization
+matplotlib==3.7.1
+seaborn==0.12.2
+
+# metrics
+scikit-learn==1.2.2

@@ -1,10 +1,11 @@
 # imports
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score, accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
-from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.tree import DecisionTreeClassifier, plot_tree
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LinearRegression
 from sklearn.naive_bayes import MultinomialNB
+
+import base64
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -14,24 +15,30 @@ import io
 
 
 
-def simple_linear_regression(x, y):
+def simple_linear_regression(train_data, test_data):
+
+    # Extrai caracteristicas dos dados de treinamento e teste
+    X_train = train_data.iloc[:,:-1]
+    y_train = train_data.iloc[:,-1]
+    X_test = test_data.iloc[:,:-1]
+    y_test = test_data.iloc[:,-1]
+
     #modelo
     model = LinearRegression()
 
-    x = x.reshape(-1, 1)
-    model.fit(x, y)
+    model.fit(X_train, y_train)
 
-    y_pred = model.predict(x)
+    y_pred = model.predict(X_test)
 
     #metricas
-    mae = mean_absolute_error(y, y_pred)
-    mse = mean_squared_error(y, y_pred)
+    mae = mean_absolute_error(y_test, y_pred)
+    mse = mean_squared_error(y_test, y_pred)
     rmse = np.sqrt(mse)
-    r2 = r2_score(y, y_pred)
+    r2 = r2_score(y_test, y_pred)
 
     #plot regressão
-    plt.scatter(x, y)
-    plt.plot(x, y_pred, color='red')
+    plt.scatter(X_train, y_train)
+    plt.plot(X_test, y_pred, color='red')
     plt.xlabel('X')
     plt.ylabel('Y')
     plt.title('Regressão Linear Simples')
@@ -39,31 +46,33 @@ def simple_linear_regression(x, y):
     image_bytes = io.BytesIO()
     plt.savefig(image_bytes, format='png')
     plt.close()
+    image_bytes = base64.b64encode(s=image_bytes.getvalue())
 
-    return mae, mse, rmse, r2, model, image_bytes
+    return mae, mse, rmse, r2, image_bytes, model
 
-# dados de exemplo
-x = np.array([1, 2, 3, 4, 5])
-y = np.array([2, 3, 5, 6, 8])
-
-#chama funcao simple_linear_regression
-simple_linear_regression(x, y)
 
 """###Mult Linear Regression"""
 
-def multiple_linear_regression(x, y):
+def multiple_linear_regression(train_data, test_data):
+
+    # Extrai caracteristicas dos dados de treinamento e teste
+    X_train = train_data.iloc[:,:-1]
+    y_train = train_data.iloc[:,-1]
+    X_test = test_data.iloc[:,:-1]
+    y_test = test_data.iloc[:,-1]
+
     #modelo
     model = LinearRegression()
 
-    model.fit(x, y)
+    model.fit(X_train, y_train)
 
-    y_pred = model.predict(x)
+    y_pred = model.predict(X_test)
 
     #metricas
-    mae = mean_absolute_error(y, y_pred)
-    mse = mean_squared_error(y, y_pred)
+    mae = mean_absolute_error(y_test, y_pred)
+    mse = mean_squared_error(y_test, y_pred)
     rmse = np.sqrt(mse)
-    r2 = r2_score(y, y_pred)
+    r2 = r2_score(y_test, y_pred)
 
     #plot metricas
     metrics = ['MAE', 'MSE', 'RMSE', 'R²']
@@ -76,25 +85,19 @@ def multiple_linear_regression(x, y):
     image_bytes = io.BytesIO()
     plt.savefig(image_bytes, format='png')
     plt.close()
+    image_bytes = base64.b64encode(s=image_bytes.getvalue())
 
-    return mae, mse, rmse, r2, model, image_bytes
+    return mae, mse, rmse, r2, image_bytes, model
 
-#dados de exemplo
-x = np.array([[1, 2, 3], [2, 3, 4], [3, 4, 5], [4, 5, 6], [5, 6, 7]])
-y = np.array([3, 5, 7, 9, 11])
-
-#chama funcao multiple_linear_regression
-multiple_linear_regression(x, y)
 
 """### Model Bayes"""
 
 def naive_bayes_classifier(train_data, test_data):
     # Extrai caracteristicas dos dados de treinamento e teste
-    vectorizer = CountVectorizer()
-    X_train = vectorizer.fit_transform(train_data['text'])
-    y_train = train_data['label']
-    X_test = vectorizer.transform(test_data['text'])
-    y_test = test_data['label']
+    X_train = train_data.iloc[:,:-1]
+    y_train = train_data.iloc[:,-1]
+    X_test = test_data.iloc[:,:-1]
+    y_test = test_data.iloc[:,-1]
 
     # Treina modelo Naive Bayes
     nb = MultinomialNB()
@@ -125,38 +128,15 @@ def naive_bayes_classifier(train_data, test_data):
 
     return accuracy, precision, recall, f1, cm, nb, image_bytes
 
-#exemplo dados de treinamento
-train_data = pd.DataFrame({
-    'text': [
-        'este é um texto de exemplo',
-        'outro exemplo de texto',
-        'um terceiro exemplo de texto',
-        'mais um exemplo para o modelo'
-    ],
-    'label': [0, 1, 0, 1]
-})
-
-#exemplo dados de teste
-test_data = pd.DataFrame({
-    'text': [
-        'exemplo de texto para teste',
-        'outro teste de modelo',
-        'um terceiro teste de classificação'
-    ],
-    'label': [0, 1, 0]
-})
-
-#chama funcao naive_bayes_classifier
-naive_bayes_classifier(train_data, test_data)
 
 """### Modelo de Decisão Arvore"""
 
 def decision_tree_classifier(train_data, test_data):
     #Extrai caracteristicas dos dados de treinamento e teste
-    X_train = train_data.drop('label', axis=1)
-    y_train = train_data['label']
-    X_test = test_data.drop('label', axis=1)
-    y_test = test_data['label']
+    X_train = train_data.iloc[:,:-1]
+    y_train = train_data.iloc[:,-1]
+    X_test = test_data.iloc[:,:-1]
+    y_test = test_data.iloc[:,-1]
 
     #treina modelo arvore de decisao
     dtc = DecisionTreeClassifier()
@@ -186,28 +166,43 @@ def decision_tree_classifier(train_data, test_data):
 
 """### Model KNN"""
 
-def knn_classifier(train_data, test_data, k):
+def knn_classifier(train_data, test_data):
     #Extrai caracteristicas dados de treinamento e teste
-    X_train = train_data[['feature1', 'feature2', 'feature3']]
-    y_train = train_data['label']
-    X_test = test_data[['feature1', 'feature2', 'feature3']]
-    y_test = test_data['label']
+    X_train = train_data.iloc[:,:-1]
+    y_train = train_data.iloc[:,-1]
+    X_test = test_data.iloc[:,:-1]
+    y_test = test_data.iloc[:,-1]
 
     #cria modelo KNN
-    knn = KNeighborsClassifier(n_neighbors=k)
-    knn.fit(X_train, y_train)
+    best_acc = 0
+    best_pre = 0
+    best_rec = 0
+    best_f1 = 0
+    best_model = None
+    best_pred = None
+    for k in range(1,31):
+        knn = KNeighborsClassifier(n_neighbors=k)
+        knn.fit(X_train, y_train)
 
-    #previsao dados de teste
-    y_pred = knn.predict(X_test)
+        #previsao dados de teste
+        y_pred = knn.predict(X_test)
 
-    #metricas
-    accuracy = accuracy_score(y_test, y_pred)
-    precision = precision_score(y_test, y_pred)
-    recall = recall_score(y_test, y_pred)
-    f1 = f1_score(y_test, y_pred)
+        #metricas
+        accuracy = accuracy_score(y_test, y_pred)
+        precision = precision_score(y_test, y_pred)
+        recall = recall_score(y_test, y_pred)
+        f1 = f1_score(y_test, y_pred)
+
+        if accuracy > best_acc:
+            best_acc = accuracy
+            best_pre = precision
+            best_rec = recall
+            best_f1 = f1
+            best_model = knn
+            best_pred = y_pred
 
     #matriz de confusao
-    cm = confusion_matrix(y_test, y_pred)
+    cm = confusion_matrix(y_test, best_pred)
 
     #Plot matriz de confusão
     plt.figure(figsize=(8, 6))
@@ -220,4 +215,27 @@ def knn_classifier(train_data, test_data, k):
     plt.savefig(image_bytes, format='png')
     plt.close()
 
-    return accuracy, precision, recall, f1, cm, knn, image_bytes
+    return best_acc, best_pre, best_rec, best_f1, cm, best_model, image_bytes
+
+def train(model_type: str, train: pd.DataFrame, test: pd.DataFrame) -> dict:
+
+    models = {
+        'regression': [('multi linear', multiple_linear_regression)],
+        'classification': [('knn', knn_classifier), ('decision tree', decision_tree_classifier), ('naive bayes', naive_bayes_classifier)]
+    }
+    metrics_names = {
+        'regression': ['mae', 'mse', 'rmse', 'r2'],
+        'classification': ['accuracy', 'precision', 'recall', 'f1', 'cm']
+    }
+    metrics = metrics_names[model_type] + ['graph']
+    results = {}
+    for name, model in models[model_type]:
+
+        results[name] = {}
+
+        output = model(train, test)
+
+        for met_name, value in zip(metrics, output):
+            results[name][met_name] = value
+
+    return results

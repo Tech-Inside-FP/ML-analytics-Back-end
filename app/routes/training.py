@@ -1,5 +1,6 @@
 # imports
 from utils.preprocessing import *
+from utils.training import train
 
 from fastapi.encoders import jsonable_encoder
 from schemas.training import DatasetSchema
@@ -52,13 +53,11 @@ async def read_request(data) -> dict:
             df_copy[col] = df_copy[col].map(preprocess_method[dt])
         else:
             remove_col.append(col)
-    
-    return {
-        'filename': data['filename'],
-        'dataframe': df_copy,
-        'features': data['features'],
-        'target': data['target']
-    }
+    df_copy = df_copy.drop(labels=remove_col, axis=1)
+    train_df, test_df = split_dataset(data=df_copy)
+
+    return train(model_type=data['model'], train=train_df, test=test_df)
+
 
 # --- ROUTES ---
 @trainRouter.get(path='/')
@@ -70,5 +69,5 @@ async def deploy_dataset(request: DatasetSchema = (...)) -> dict:
     # reading request
     request = jsonable_encoder(obj=request)
     content = await read_request(data=request)
-    
-    return {'response': list(content['dataframe'])}
+
+    return {'response': content}

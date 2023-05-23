@@ -22,7 +22,6 @@ class DatasetSchema(BaseModel):
                 'model': 'regression',
                 'content': base64.b64encode(s=pd.read_csv(filepath_or_buffer='test_files/test_dataset_1.csv').to_json().encode(encoding='utf-8')),
                 'features': [
-                    'City',
                     'Rating',
                     'Votes'
                 ],
