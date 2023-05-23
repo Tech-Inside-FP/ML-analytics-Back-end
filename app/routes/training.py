@@ -20,6 +20,9 @@ async def read_request(data) -> dict:
     df_bytes = df_base64.decode(encoding='utf-8')
     # converting to DataFrame
     df = pd.read_json(path_or_buf=df_bytes)
+    
+    # selecting columns
+    df = df[list(data['features']) + list(data['target'])]
     df_copy = df.copy(deep=True)
     
     # dropping nan rows
