@@ -22,7 +22,7 @@ async def read_request(data) -> dict:
     df = pd.read_json(path_or_buf=df_bytes)
     
     # selecting columns
-    df = df[list(data['features']) + list(data['target'])]
+    df = df[data['features'] + [data['target']]]
     df_copy = df.copy(deep=True)
     
     # dropping nan rows
