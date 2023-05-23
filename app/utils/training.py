@@ -23,6 +23,7 @@ def simple_linear_regression(x, y):
     y_pred = model.predict(x)
 
     #metricas
+    mae = mean_absolute_error(y, y_pred)
     mse = mean_squared_error(y, y_pred)
     rmse = np.sqrt(mse)
     r2 = r2_score(y, y_pred)
@@ -35,16 +36,7 @@ def simple_linear_regression(x, y):
     plt.title('Regressão Linear Simples')
     plt.show()
 
-    #print metricas
-    print('MSE:', mse)
-    print('RMSE:', rmse)
-    print('R²:', r2)
-
-    #coeficientes
-    slope = model.coef_[0]
-    intercept = model.intercept_
-    print('Coeficiente Angular:', slope)
-    print('Coeficiente Linear:', intercept)
+    return mae, mse, rmse, r2, model
 
 # dados de exemplo
 x = np.array([1, 2, 3, 4, 5])
@@ -78,11 +70,7 @@ def multiple_linear_regression(x, y):
     plt.ylabel('Valores')
     plt.show()
 
-    #print metricas
-    print('MAE:', mae)
-    print('MSE:', mse)
-    print('RMSE:', rmse)
-    print('R²:', r2)
+    return mae, mse, rmse, r2, model
 
 #dados de exemplo
 x = np.array([[1, 2, 3], [2, 3, 4], [3, 4, 5], [4, 5, 6], [5, 6, 7]])
@@ -125,11 +113,7 @@ def naive_bayes_classifier(train_data, test_data):
     plt.title('Confusion Matrix')
     plt.show()
 
-    #print metricas
-    print("Accuracy:", accuracy)
-    print("Precision:", precision)
-    print("Recall:", recall)
-    print("F1 Score:", f1)
+    return accuracy, precision, recall, f1, cm, nb
 
 #exemplo dados de treinamento
 train_data = pd.DataFrame({
@@ -176,19 +160,16 @@ def decision_tree_classifier(train_data, test_data):
     precision = precision_score(y_test, y_pred)
     recall = recall_score(y_test, y_pred)
     f1 = f1_score(y_test, y_pred)
+    
+    #matriz de confusao
+    cm = confusion_matrix(y_test, y_pred)
 
     #Plot arvore
     plt.figure(figsize=(12, 8))
     plot_tree(dtc, feature_names=X_train.columns, class_names=['0', '1'], filled=True, rounded=True)
     plt.show()
 
-    #print metricas
-    print("Accuracy:", accuracy)
-    print("Precision:", precision)
-    print("Recall:", recall)
-    print("F1 Score:", f1)
-
-    return dtc
+    return accuracy, precision, recall, f1, cm, dtc
 
 #dados de exemplo
 train_data = pd.DataFrame({
@@ -225,6 +206,8 @@ def knn_classifier(train_data, test_data, k):
     #metricas
     accuracy = accuracy_score(y_test, y_pred)
     precision = precision_score(y_test, y_pred)
+    recall = recall_score(y_test, y_pred)
+    f1 = f1_score(y_test, y_pred)
 
     #matriz de confusao
     cm = confusion_matrix(y_test, y_pred)
@@ -237,8 +220,4 @@ def knn_classifier(train_data, test_data, k):
     plt.title('Confusion Matrix')
     plt.show()
 
-    #print metricas
-    print("Accuracy:", accuracy)
-    print("Precision:", precision)
-
-    return accuracy, precision
+    return accuracy, precision, recall, f1, cm, knn
