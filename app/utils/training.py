@@ -74,20 +74,7 @@ def multiple_linear_regression(train_data, test_data):
     rmse = np.sqrt(mse)
     r2 = r2_score(y_test, y_pred)
 
-    #plot metricas
-    metrics = ['MAE', 'MSE', 'RMSE', 'R²']
-    values = [mae, mse, rmse, r2]
-    plt.bar(metrics, values)
-    plt.title('Métricas de Regressão Linear Múltipla')
-    plt.xlabel('Métricas')
-    plt.ylabel('Valores')
-    
-    image_bytes = io.BytesIO()
-    plt.savefig(image_bytes, format='png')
-    plt.close()
-    image_bytes = base64.b64encode(s=image_bytes.getvalue())
-
-    return mae, mse, rmse, r2, image_bytes, model
+    return mae, mse, rmse, r2, np.asarray(a=y_pred), np.asarray(a=y_test)
 
 
 """### Model Bayes"""
@@ -112,21 +99,7 @@ def naive_bayes_classifier(train_data, test_data):
     recall = recall_score(y_test, y_pred)
     f1 = f1_score(y_test, y_pred)
 
-    #matriz de confusao
-    cm = confusion_matrix(y_test, y_pred)
-
-    #Plot matriz de confusao
-    plt.figure(figsize=(8, 6))
-    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
-    plt.xlabel('Predicted')
-    plt.ylabel('True')
-    plt.title('Confusion Matrix')
-    
-    image_bytes = io.BytesIO()
-    plt.savefig(image_bytes, format='png')
-    plt.close()
-
-    return accuracy, precision, recall, f1, cm, nb, image_bytes
+    return accuracy, precision, recall, f1, np.asarray(a=y_pred), np.asarray(a=y_test)
 
 
 """### Modelo de Decisão Arvore"""
@@ -150,19 +123,8 @@ def decision_tree_classifier(train_data, test_data):
     precision = precision_score(y_test, y_pred)
     recall = recall_score(y_test, y_pred)
     f1 = f1_score(y_test, y_pred)
-    
-    #matriz de confusao
-    cm = confusion_matrix(y_test, y_pred)
 
-    #Plot arvore
-    plt.figure(figsize=(12, 8))
-    plot_tree(dtc, feature_names=X_train.columns, class_names=['0', '1'], filled=True, rounded=True)
-    
-    image_bytes = io.BytesIO()
-    plt.savefig(image_bytes, format='png')
-    plt.close()
-
-    return accuracy, precision, recall, f1, cm, dtc, image_bytes
+    return accuracy, precision, recall, f1, np.asarray(a=y_pred), np.asarray(a=y_test)
 
 """### Model KNN"""
 
@@ -178,7 +140,6 @@ def knn_classifier(train_data, test_data):
     best_pre = 0
     best_rec = 0
     best_f1 = 0
-    best_model = None
     best_pred = None
     for k in range(1,31):
         knn = KNeighborsClassifier(n_neighbors=k)
@@ -198,24 +159,9 @@ def knn_classifier(train_data, test_data):
             best_pre = precision
             best_rec = recall
             best_f1 = f1
-            best_model = knn
             best_pred = y_pred
 
-    #matriz de confusao
-    cm = confusion_matrix(y_test, best_pred)
-
-    #Plot matriz de confusão
-    plt.figure(figsize=(8, 6))
-    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
-    plt.xlabel('Predicted')
-    plt.ylabel('True')
-    plt.title('Confusion Matrix')
-    
-    image_bytes = io.BytesIO()
-    plt.savefig(image_bytes, format='png')
-    plt.close()
-
-    return best_acc, best_pre, best_rec, best_f1, cm, best_model, image_bytes
+    return best_acc, best_pre, best_rec, best_f1, np.asarray(a=best_pred), np.asarray(a=y_test)
 
 def train(model_type: str, train: pd.DataFrame, test: pd.DataFrame) -> dict:
 
@@ -227,7 +173,7 @@ def train(model_type: str, train: pd.DataFrame, test: pd.DataFrame) -> dict:
         'regression': ['mae', 'mse', 'rmse', 'r2'],
         'classification': ['accuracy', 'precision', 'recall', 'f1', 'cm']
     }
-    metrics = metrics_names[model_type] + ['graph']
+    metrics = metrics_names[model_type] + ['yhat', 'y']
     results = {}
     for name, model in models[model_type]:
 
