@@ -74,7 +74,7 @@ def multiple_linear_regression(train_data, test_data):
     rmse = np.sqrt(mse)
     r2 = r2_score(y_test, y_pred)
 
-    return mae, mse, rmse, r2, np.asarray(a=y_pred), np.asarray(a=y_test)
+    return mae, mse, rmse, r2, list(y_pred), list(y_test)
 
 
 """### Model Bayes"""
@@ -99,7 +99,7 @@ def naive_bayes_classifier(train_data, test_data):
     recall = recall_score(y_test, y_pred)
     f1 = f1_score(y_test, y_pred)
 
-    return accuracy, precision, recall, f1, np.asarray(a=y_pred), np.asarray(a=y_test)
+    return accuracy, precision, recall, f1, list(y_pred), list(y_test)
 
 
 """### Modelo de Decisão Arvore"""
@@ -124,7 +124,7 @@ def decision_tree_classifier(train_data, test_data):
     recall = recall_score(y_test, y_pred)
     f1 = f1_score(y_test, y_pred)
 
-    return accuracy, precision, recall, f1, np.asarray(a=y_pred), np.asarray(a=y_test)
+    return accuracy, precision, recall, f1, list(y_pred), list(y_test)
 
 """### Model KNN"""
 
@@ -161,7 +161,7 @@ def knn_classifier(train_data, test_data):
             best_f1 = f1
             best_pred = y_pred
 
-    return best_acc, best_pre, best_rec, best_f1, np.asarray(a=best_pred), np.asarray(a=y_test)
+    return best_acc, best_pre, best_rec, best_f1, list(best_pred), list(y_test)
 
 def train(model_type: str, train: pd.DataFrame, test: pd.DataFrame) -> dict:
 
@@ -171,8 +171,11 @@ def train(model_type: str, train: pd.DataFrame, test: pd.DataFrame) -> dict:
     }
     metrics_names = {
         'regression': ['mae', 'mse', 'rmse', 'r2'],
-        'classification': ['accuracy', 'precision', 'recall', 'f1', 'cm']
+        'classification': ['accuracy', 'precision', 'recall', 'f1']
     }
+    
+    main_metric = {'regression': 'rmse', 'classification': 'accuracy'}
+    
     metrics = metrics_names[model_type] + ['yhat', 'y']
     results = {}
     for name, model in models[model_type]:
@@ -183,5 +186,16 @@ def train(model_type: str, train: pd.DataFrame, test: pd.DataFrame) -> dict:
 
         for met_name, value in zip(metrics, output):
             results[name][met_name] = value
+
+    results = dict(sorted(results.items(), key=lambda x: x[1][main_metric[model_type]], reverse=True))
+    model = list(results.keys())[0]
+    results = {model: results[model]}
+
+    if model_type == 'classification':
+        results[model]['yhat'] = [int(v) for v in results[model]['yhat']]
+        results[model]['y'] = [int(v) for v in results[model]['y']]
+    else:
+        results[model]['yhat'] = [float(v) for v in results[model]['yhat']]
+        results[model]['y'] = [float(v) for v in results[model]['y']]
 
     return results

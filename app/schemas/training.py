@@ -20,7 +20,7 @@ class DatasetSchema(BaseModel):
             'example': {
                 'filename': 'database.csv',
                 'model': 'regression',
-                'content': base64.b64encode(s=pd.read_csv(filepath_or_buffer='test_files/test_dataset_1.csv').to_json().encode(encoding='utf-8')),
+                'content': base64.b64encode(s=pd.read_csv(filepath_or_buffer='../test_files/sla.csv').to_string().encode(encoding='utf-8')),
                 'features': [
                     'Rating',
                     'Votes'
